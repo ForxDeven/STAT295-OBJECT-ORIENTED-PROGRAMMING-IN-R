@@ -1,0 +1,5 @@
+unitid,instnm,city,stabbr,numbranch,highdeg,preddeg,control,distanceonly,tuitfte,avgfacsal,adm_rate_all,satvr25,satvr75,satmt25,satmt75,actcm25,actcm75,ugds,ug25abv,pctfloan,cdr3
+100724,Alabama State University,Montgomery,AL,1,Graduate's,Bachelor's,Public,No,9003.0,7399.0,0.9786612101724599,380.0,485.0,375.0,481.0,16.0,20.0,4189.0,0.0848,0.769,0.21100000000000002
+100830,Auburn University at Montgomery,Montgomery,AL,1,Graduate's,Bachelor's,Public,No,8709.0,7518.0,0.8253839935327401,490.0,565.0,475.0,545.0,19.0,24.0,4211.0,0.2244,0.5769,0.115
+102313,H Councill Trenholm State Community College,Montgomery,AL,1,Associate's,Certificate,Public,No,2590.0,5811.0,,,,,,,,1610.0,0.2997,0.0,
+10236802,Troy University-Montgomery Campus,Montgomery,AL,4,,,Public,,,,0.88122709379666,,,,,,,,,,0.10400000000000001

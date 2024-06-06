@@ -1,0 +1,35 @@
+---
+title: "Recit-8"
+author: "Ali Altuntaş"
+date: "2024-04-17"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_tools: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Recit 8
+
+This file contains recit 8 notes.
+
+> *"Yurtta sulh cihanda sulh."* M.K.Atatürk
+
+[Leaflet](https://cran.r-project.org/web/packages/leaflet/index.html)
+
+```{r echo=TRUE}
+libraries <- c("ggplot2","sf","rworldmap","tidyverse","magrittr",
+                      "leaflet", "dplyr", "rvest", "xml2","rvest",
+                      "maps","mapdata","RgoogleMaps","lubridate","rnaturalearth","dplyr","rnaturalearthdata","RColorBrewer","httr")
+lapply(libraries, require, character.only = TRUE)
+```
+
+## Reis
+
+![RTE REIS AUUUUU](https://pbs.twimg.com/media/CBnrHpmWYAEdQLQ.jpg){width="568"}
+
+## Life Expectancy

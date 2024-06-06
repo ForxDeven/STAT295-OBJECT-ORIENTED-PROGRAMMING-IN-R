@@ -1,0 +1,162 @@
+---
+title: "STAT 295 - HW1"
+author: "Ali Altuntaş, Rubar Akyıldız"
+date: "2024-04-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries, include=FALSE}
+library(tidyverse)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(leaflet)
+```
+
+# Question 1:
+
+**i.** Read the data. Change the name of the data for college_score.csv and print the lines 10 through 60.
+
+```{r q1-1}
+# wget https://raw.githubusercontent.com/dhavalpotdar/College-Scorecard-Data-Analysis/master/MERGED_2017_2018_cleaned.csv
+
+# mv MERGED_2017_2018_cleaned.csv college_score.csv
+
+# sed -n '10,60p' college_score.csv
+```
+
+**ii.** Create a sub-sample of the data set with the following condition: control = Public and city = Montgomery. Add this sub-sample to subsample.csv file.
+
+```{r q1-2}
+# head -n1 college_score.csv | cat > subsample.csv
+# awk -F, '{if($3=="Montgomery"&&$8=="Public") {print}}' college_score.csv | cat >> subsample.csv
+```
+
+**iii.** Obtain the frequencies of each cities.
+
+```{r q1-3}
+# cut -d, -f3 college_score.csv | sort | uniq -c
+```
+
+# Question 2:
+
+**i.** Read the data set provided in the above URL and assign the name as chocolate. Print the first 6 rows. Examine the structure of the data and comment shortly.
+
+```{r q2-1}
+# wget https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/chocolate.csv
+
+chocolate <- read.csv("chocolate.csv")
+
+chocolate %>% head(6)
+```
+
+**ii.** Using the some specific command with **pipe-operator,** convert all the characters in your data set into factors.
+
+```{r q2-2}
+chocolate <- chocolate %>% mutate_if(is.character,as.factor)
+
+chocolate %>% head(6)
+```
+
+**iii.** Obtain some statistics such as mean, standard deviation, median and range of rating values with respect to different company locations. Print only the first 10 observations. Comment some specific statistics shortly from the output.
+
+```{r q2-3}
+chocolate %>%  summary()
+```
+
+**iv.** Find the chocolates that its review date is equal to 2020 and country of bean origin is equal to Colombia.
+
+```{r}
+colombia <- chocolate %>% filter(review_date == 2020 & country_of_bean_origin == "Colombia")
+colombia
+```
+
+**v.** Take the mean of chocolate rating and cocoa percent according to the company location.
+
+```{r}
+mean_r <- chocolate %>% aggregate(cbind(rating, cocoa_percent) ~ company_location, FUN = mean)
+```
+
+**vi.** Select company manufacturer, company location and country of bean origin **shortly**. Print the first 10 rows of the data frame. (Hint: Please check the column names)
+
+```{r}
+chocolate %>% select(company_manufacturer,company_location,country_of_bean_origin) %>% head(10)
+```
+
+**vii.** Filter that company location in Switzerland whose rating between 3.25 and 3.5. Take the five observations.
+
+```{r}
+chocolate %>%filter(between(rating,3.25,3.5),company_location == "Switzerland") %>% head(5)
+```
+
+**viii.** What is the mean of the rating column for each company locations find and order by descending.
+
+```{r}
+chocolate %>% group_by(company_location) %>% na.omit() %>% summarise(mean(rating), ordered="decreasing")
+```
+
+**ix.** Count that how many observations are assigned Bonnat for each country of bean origin?
+
+```{r}
+chocolate %>% filter(company_manufacturer == "Bonnat") %>% count()
+```
+
+**v.** Using **`mutate()`** function
+create a new column called Rating Percantage, which is percentage
+version of the rating column. For instance if the rating is 4, then
+percentage of it is 100. If the rating is 3.5, their percentage is 87,5.
+After that create another new column called Class, if Rating Percantage
+is less than 25 then called Class as Low, if it’s between 25 and 50
+called as Medium, if it’s between 50 and 87,5 called as Tasty and if
+it’s bigger than 87,5 called as Excellent.
+
+```{r include=FALSE}
+chocolate %>% mutate(RatingPercentage = (rating / 4) * 100) %>% mutate(Class = case_when(RatingPercentage < 25 ~ 'Low', RatingPercentage < 50 ~ 'Medium', RatingPercentage < 87.5 ~ 'Tasty', RatingPercentage < 100.1 ~ 'Excellent'))
+```
+
+# Question 3:
+
+**i.** Read data set correctly from the link and called
+them as nmmaps.Then, examine the relationship between date and temp
+based on the year. Interpret shortly your plots.
+
+(Hint: You should use facet_wrap)
+
+```{r}
+nmmaps <- read.csv('https://www.cedricscherer.com/data/chicago-nmmaps-custom.csv')
+
+nmmaps %>% ggplot(aes(x = date, y = temp)) + geom_point()
+```
+
+**ii.** Examine the relationship between date, temp and
+season. For this question, first specify the factor for season (There
+are 4 different levels.) Then using geom_point function, examine the
+relationship and interpret shortly.
+
+```{r}
+ggplot(nmmaps, aes(x=date,y=temp)) +
+  geom_point(size=2,alpha=.6)+
+  geom_smooth(method = "lm",se= FALSE)+
+  facet_wrap(~season)
+```
+
+# Question 4:
+
+```{r}
+battlefields <- read.csv('https://files.planning.data.gov.uk/dataset/battlefield.csv')
+battlefields <- battlefields %>% mutate(long_lat = substr(point, start= 7, stop=25))
+
+battlefields <- battlefields %>% mutate(long = substr(long_lat, start= 1, stop=9))
+
+battlefields <- battlefields %>% mutate(lat = substr(long_lat, start= 11, stop=17))
+
+battlefields$long <- as.numeric(battlefields$long)
+battlefields$lat <- as.numeric(battlefields$lat)
+
+battlefields %>% leaflet() %>% addProviderTiles("Esri")%>% addMarkers(~long, ~lat, label = ~name, popup = paste0("<b> Name: </b>",battlefields$name,"<br>","<b> Wikipedia </b>", battlefields$wikipedia,"<br>","<b> Wikidata </b>", battlefields$wikidata,"<br>","<b> Document URL: </b>", battlefields$document.url,"<br>","<b> Documentation URL: </b>", battlefields$documentation.url,"<br>")) %>% setView(lng = median(battlefields$long),lat = median(battlefields$lat), zoom = 4.6)
+
+```
